@@ -55,7 +55,7 @@ public class OrderServiceClient {
 		try {
 			//service=discoveryClient.getApplication(restaurantServiceClient).getInstances().get(0);
 			services=discoveryClient.getInstances(restaurantServiceClient);
-		  if(!services.isEmpty()) {
+		  if(services.size()!=0 && request.getOrderId()!=null && !request.getOrderId().isEmpty()) {
 			  System.out.println("Restaurant Service Instance is :"+services.get(0).getUri());
 			  response=restTemplate.getForEntity("http://"+services.get(0).getServiceId()+restaurantServiceClienturi+request.getOrderId(),OrderResponseDTO.class);
 		  }		 
