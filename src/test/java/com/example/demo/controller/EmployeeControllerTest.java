@@ -37,6 +37,7 @@ public class EmployeeControllerTest {
 		request.setEmpId("EMP123");
 		request.setEmpName("John Doe");
 		request.setEmpDept("IT");
+		request.setEmail("tes1@gmail.com");
 		request.setEmpSalary(50000);
 		request.setOrderId("ORD001");
 		
@@ -47,12 +48,12 @@ public class EmployeeControllerTest {
 		
 		Mockito.when(employeeService.addEmployee(request)).thenReturn(ResponseEntity.ok(response));
 		
-		ResponseEntity<Response> re=employeeController.addEmployee(request);
+		ResponseEntity<Response> re=employeeController.addEmployee("tes1@gmail.com",request);
 		
 		Assertions.assertEquals(request.getEmpId(), re.getBody().getEId());
 		
 		Assertions.assertDoesNotThrow(() -> {
-			employeeController.addEmployee(request);
+			employeeController.addEmployee("tes1@gmail.com",request);
 		});
 		
 	}
@@ -63,13 +64,14 @@ public class EmployeeControllerTest {
 		request.setEmpId("EMP123");
 		request.setEmpName("John Doe");
 		request.setEmpDept("IT");
+		request.setEmail("tes1@gmail.com");
 		request.setEmpSalary(50000);
 		request.setOrderId("ORD001");
 		
 		Mockito.when(employeeService.addEmployee(request)).thenThrow(new EmployeeNotFoundException(new ErrorRequest("500","Database error")));
 		
 		EmployeeNotFoundException exception=Assertions.assertThrows(EmployeeNotFoundException.class, ()->{
-			employeeController.addEmployee(request);
+			employeeController.addEmployee("tes1@gmail.com",request);
 		});
 		
 		Assertions.assertEquals("Database error", exception.getErrorRequest().getErrorMessage());
@@ -81,9 +83,9 @@ public class EmployeeControllerTest {
 		Pageable pageable=PageRequest.of(0, 3,Sort.by("empName").ascending());		
 		Page<Request> page=new PageImpl<>(
 				    Arrays.asList(
-						new Request("EMP001","Alice","HR",60000,"xyz"),
-						new Request("EMP002","Bob","IT",70000,"abc"),
-						new Request("EMP003","Charlie","Finance",80000,"def")
+						new Request("EMP001","Alice","HR","tes1@gmail.com",60000,"xyz"),
+						new Request("EMP002","Bob","IT","tes1@gmail.com",70000,"abc"),
+						new Request("EMP003","Charlie","Finance","tes1@gmail.com",80000,"def")
 						)
 				);
 		Mockito.when(employeeService.getAllEmployees(pageable)).thenReturn(page);

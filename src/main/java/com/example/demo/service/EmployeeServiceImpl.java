@@ -14,6 +14,7 @@ import com.example.demo.entity.ErrorRequest;
 import com.example.demo.entity.OrderResponseDTO;
 import com.example.demo.entity.Request;
 import com.example.demo.entity.Response;
+import com.example.demo.entity.ResponseEmp;
 import com.example.demo.exception.EmployeeNotFoundException;
 import com.example.demo.repository.EmployeeDao;
 
@@ -32,6 +33,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public ResponseEntity<Response> addEmployee(Request request) throws EmployeeNotFoundException {
 		Request req=null;
 		Response response=null;
+		ResponseEntity<ResponseEmp> res=null;
 	    try {		
 			/*if(request.getEmpId()==null || request.getEmpId().isEmpty()) {
 			  request.setEmpId("EMP"+System.currentTimeMillis());
@@ -40,8 +42,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 		    	&& (request.getEmpDept()!=null || !request.getEmpDept().isEmpty())
 		    	&& (request.getEmpSalary()>0)
 		      ) {
-			     req=employeeDao.save(request);
-		    }    
+		    	 res=this.orderServiceClient.processTOKafka(request).get();
+		    	 if(res.getStatusCode()==HttpStatus.OK) {
+		    		 System.out.println("Message sent to Kafka successfully to get joining Date: "+res.getBody().getJoingdate());
+		    		 req=employeeDao.save(request);
+		    	 }			     
+		    }else {
+		    	throw new Exception("Invalid employee data. Please provide valid employee details.");
+		    }
 			response=new Response();
 			response.setEId(req.getEmpId());
 			response.setDescription("Employee added successfully");

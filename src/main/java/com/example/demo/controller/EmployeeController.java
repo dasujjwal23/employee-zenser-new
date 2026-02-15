@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +31,17 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 	
+	
+	@GetMapping("/welcome")
+	public String greeting(@RequestHeader(value="username", required=true) String email) { 
+		return "Welcome to Employee Service"; 
+	}
+	
 	@PostMapping("/api/v1/addEmployee")
-	public ResponseEntity<Response> addEmployee(@RequestBody Request request) throws EmployeeNotFoundException {
+	public ResponseEntity<Response> addEmployee(
+			@RequestHeader(value="username", required=true) String email,
+			@RequestBody Request request) throws EmployeeNotFoundException {
+		System.out.println("Email from header in EmployeeController :"+email);
 		try {
 			return employeeService.addEmployee(request);
 		} catch (Exception e) {

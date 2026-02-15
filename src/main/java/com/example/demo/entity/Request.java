@@ -21,11 +21,23 @@ public class Request {
 	@JsonProperty("empDept")
 	private String empDept;
 	
+	@JsonProperty("email")
+	private String email;
+	
 	@JsonProperty("empSalary")
 	private double empSalary;
 	
 	@JsonProperty("orderId")
     private String orderId;
+	
+	
+	public String getEmail() {
+		return email;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	
 	public String getOrderId() {
 		return orderId;
@@ -64,15 +76,16 @@ public class Request {
 	   super();
    }
 	
-   public Request(String empId, String empName, String empDept, double empSalary, String orderId) {
+   public Request(String empId, String empName, String empDept,String email, double empSalary, String orderId) {
 	   		this.empId = empId;
 	   		this.empName = empName;
 	   	    this.empDept = empDept;
+	   	    this.email = email;
 	   	    this.empSalary = empSalary;
 	   	    this.orderId = orderId;
    }
    
    public String toString() {
-	   return "Request [empId=" + empId + ", empName=" + empName + ", empDept=" + empDept + ", empSalary=" + empSalary + ", orderId=" + orderId + "]";
+	   return "Request [empId=" + empId + ", empName=" + empName + ", empDept=" + empDept + ",email=" + email + ", empSalary=" + empSalary + ", orderId=" + orderId + "]";
    }
 }
