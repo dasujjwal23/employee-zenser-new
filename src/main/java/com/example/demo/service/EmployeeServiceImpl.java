@@ -3,6 +3,8 @@ package com.example.demo.service;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,26 +29,29 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	private OrderServiceClient orderServiceClient;
 	
+	Logger logger=LoggerFactory.getLogger(EmployeeServiceImpl.class);
 	
-
 	@Override
 	public ResponseEntity<Response> addEmployee(Request request) throws EmployeeNotFoundException {
 		Request req=null;
 		Response response=null;
 		ResponseEntity<ResponseEmp> res=null;
 	    try {		
-			/*if(request.getEmpId()==null || request.getEmpId().isEmpty()) {
+			if(request.getEmpId()==null || request.getEmpId().isEmpty()) {
 			  request.setEmpId("EMP"+System.currentTimeMillis());
-		    }*/
+		    }
 		    if((request.getEmpName()!=null || !request.getEmpName().isEmpty()) 
 		    	&& (request.getEmpDept()!=null || !request.getEmpDept().isEmpty())
 		    	&& (request.getEmpSalary()>0)
 		      ) {
 		    	 res=this.orderServiceClient.processTOKafka(request).get();
-		    	 if(res.getStatusCode()==HttpStatus.OK) {
+		    	 if(res.getStatusCode()==HttpStatus.CREATED || res.getStatusCode()==HttpStatus.OK) {
+		    	     System.out.println("Response received from Kafka for empId: "+res.getStatusCode());
 		    		 System.out.println("Message sent to Kafka successfully to get joining Date: "+res.getBody().getJoingdate());
 		    		 req=employeeDao.save(request);
-		    	 }			     
+		    	 }else {
+		    		 throw new Exception("Failed to save data to database: "+request.getEmpId());
+		    	 }
 		    }else {
 		    	throw new Exception("Invalid employee data. Please provide valid employee details.");
 		    }
@@ -55,6 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 			response.setDescription("Employee added successfully");
 			response.setStatus("Success");
 	    }catch(Exception e) {
+	    	logger.error("Exception in EmployeeServiceImpl addEmployee method: "+e.getMessage());
 	    	throw new EmployeeNotFoundException(new ErrorRequest("5OO",e.getMessage()));
 	    }
 		return ResponseEntity.status(HttpStatus.OK).body(response);

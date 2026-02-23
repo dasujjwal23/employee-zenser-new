@@ -61,5 +61,5 @@ resilience4j.thread-pool-bulkhead:
       coreThreadPoolSize: 1
 loan:
   kafka:
-    hostname: http://localhost:9191
+    hostname: LOAN-PROCESSING-SERVICE
     uri: /api/loans/emp/processToKafka
