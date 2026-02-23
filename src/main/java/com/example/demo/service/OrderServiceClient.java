@@ -91,10 +91,13 @@ public class OrderServiceClient {
 	public CompletableFuture<ResponseEntity<ResponseEmp>> processTOKafka(Request request) throws Exception {
 		
 		ResponseEntity<ResponseEmp> response=null;
+		List<ServiceInstance> services=null;
 		try {
 		  if(request!=null && request.getOrderId()!=null && !request.getOrderId().isEmpty()) {
 			  System.out.println("Calling Kafka Service at URL: " + kafkaServiceClient+kafkaServiceClienturi);
-			  response=restTemplate.postForEntity(kafkaServiceClient+kafkaServiceClienturi, request, ResponseEmp.class);
+			  services=discoveryClient.getInstances(kafkaServiceClient);
+			  response=restTemplate.postForEntity("https://"+services.get(0).getServiceId()+kafkaServiceClienturi, request, ResponseEmp.class);
+			  System.out.println("Response from Kafka Service: " + response.getBody());
 		  }	else {
 			  String errorMessage = "Invalid Request for Kafka Service: Order ID is missing or empty";
 			  //throw new EmployeeNotFoundException(new ErrorRequest("500","Invalid Request for Kafka Service"));

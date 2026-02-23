@@ -35,7 +35,7 @@ public class EmployeeConfig {
          http
              .csrf(csrf->csrf.disable())
              .authorizeHttpRequests(authorizeRequests ->authorizeRequests
-	              .requestMatchers("/api/v1/addEmployee","/welcome").permitAll()
+	              .requestMatchers("/api/v1/addEmployee","/welcome","/api/loans/emp/processToKafka").permitAll()
 	              .anyRequest()// Allow access to public and login pages // Require ADMIN role for admin paths
 	              .authenticated() // Authenticate all other requests
                  ).exceptionHandling(exception -> exception

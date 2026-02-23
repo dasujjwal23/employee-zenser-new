@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 public class Request {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
+	//@GeneratedValue(strategy = GenerationType.UUID)
 	@JsonProperty("empId")
 	private String empId;
 	
