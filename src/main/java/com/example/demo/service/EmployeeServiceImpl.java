@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -17,8 +18,11 @@ import com.example.demo.entity.OrderResponseDTO;
 import com.example.demo.entity.Request;
 import com.example.demo.entity.Response;
 import com.example.demo.entity.ResponseEmp;
+import com.example.demo.entity.TransactionResponse;
+import com.example.demo.entity.TransctionRequest;
 import com.example.demo.exception.EmployeeNotFoundException;
 import com.example.demo.repository.EmployeeDao;
+import com.example.demo.repository.TransactionDao;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -28,6 +32,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	
 	@Autowired
 	private OrderServiceClient orderServiceClient;
+	
+	@Autowired
+	private TransactionDao transactionDao;
 	
 	Logger logger=LoggerFactory.getLogger(EmployeeServiceImpl.class);
 	
@@ -116,4 +123,41 @@ public class EmployeeServiceImpl implements EmployeeService {
 		 throw e;
 	  }	
 	}
+
+	@Override
+	public ResponseEntity<List<TransactionResponse>> getTransactionhistory(String contentType, String uuid,
+			TransctionRequest trequest) throws Exception {
+		try {
+			String dateTimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+			String startDate=trequest.getStartDate();
+			
+			if(trequest.getAccountNumber()==null || trequest.getAccountNumber().isEmpty()) {
+				throw new EmployeeNotFoundException(new ErrorRequest("500", "Valid Account number is required"));
+			}
+			
+			if(!startDate.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}"))
+			{
+				throw new EmployeeNotFoundException(new ErrorRequest("400", "Invalid start date format. Expected format: " + dateTimePattern));
+			}
+			String endDate=trequest.getEndDate();
+			
+			if(!endDate.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}"))
+			{
+				throw new EmployeeNotFoundException(new ErrorRequest("400", "Invalid end date format. Expected format: " + dateTimePattern));
+			}
+			List<TransactionResponse> transactions = transactionDao.getAllTransactionhistory(trequest);
+			
+			return ResponseEntity.status(HttpStatus.OK).body(transactions);
+		} catch (Exception e) {
+			if(e instanceof EmployeeNotFoundException) {
+				logger.error("EmployeeNotFoundException in EmployeeServiceImpl getTransactionhistory method: " + e.getMessage());
+			} else {
+				logger.error("Exception in EmployeeServiceImpl getTransactionhistory method: " + e.getMessage());
+				throw e;
+				//throw new EmployeeNotFoundException(new ErrorRequest("500", "Error while fetching transaction history: " + e.getMessage()));
+			}
+			throw e;
+		}
+	}
 }
+ 

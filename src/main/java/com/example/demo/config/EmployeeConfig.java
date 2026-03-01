@@ -11,6 +11,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 @Configuration
 @EnableWebSecurity
@@ -35,7 +37,7 @@ public class EmployeeConfig {
          http
              .csrf(csrf->csrf.disable())
              .authorizeHttpRequests(authorizeRequests ->authorizeRequests
-	              .requestMatchers("/api/v1/addEmployee","/welcome","/api/loans/emp/processToKafka").permitAll()
+	              .requestMatchers("/api/v1/addEmployee","/welcome","/api/loans/emp/processToKafka","/api/v1/getTransactionhistory").permitAll()
 	              .anyRequest()// Allow access to public and login pages // Require ADMIN role for admin paths
 	              .authenticated() // Authenticate all other requests
                  ).exceptionHandling(exception -> exception

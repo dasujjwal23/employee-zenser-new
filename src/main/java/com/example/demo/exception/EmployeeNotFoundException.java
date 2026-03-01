@@ -11,7 +11,7 @@ public class EmployeeNotFoundException extends Exception {
 	private ErrorRequest errorRequest;
 	
 	public EmployeeNotFoundException(ErrorRequest errorRequest) {
-		super();
+		super(errorRequest.getErrorMessage());
 		this.errorRequest = errorRequest;
 	}
 	public ErrorRequest getErrorRequest() {
