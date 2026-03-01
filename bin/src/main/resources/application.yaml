@@ -40,7 +40,7 @@ resilience4j.circuitbreaker:
       slidingWindowSize: 5
       minimumNumberOfCalls: 5
       failureRateThreshold: 50
-      waitDurationInOpenState: 10s 
+      waitDurationInOpenState: 10s
       permittedNumberOfCallsInHalfOpenState: 3
       eventConsumerBufferSize: 10
 resilience4j.timelimiter:
@@ -61,5 +61,5 @@ resilience4j.thread-pool-bulkhead:
       coreThreadPoolSize: 1
 loan:
   kafka:
-    hostname: LOAN-PROCESSING-SERVICE
+    hostname: http://localhost:9191
     uri: /api/loans/emp/processToKafka
